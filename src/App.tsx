@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 function App() {
   async function handleExcelImport(event: any) {
     let contacts: any = [];
-
+    
     for (const file of event.target.files) {
       if (!file) return;
 
@@ -32,16 +32,18 @@ function App() {
             contacts = [
               ...contacts,
               ...jsonData
+                .filter((row: any) => row["Email"])
                 .map((row: any) => {
+                  const fullName = row["Full Name"];
                   return {
                     email: row["Email"],
-                    first_name: row["First Name"],
-                    last_name: row["Last Name"],
-                    job_title: row["Title"],
+                    first_name: row["First Name"] || fullName.split(" ")[0],
+                    last_name: row["Last Name"] || fullName.split(" ")[1],
+                    job_title: row["Title"] || row["Job Title"],
                     company_linkedin: row["Company Linkedin Url"],
-                    linkedin: row["Person Linkedin Url"],
-                    company: row["Company"],
-                    website: row["Website"],
+                    linkedin: row["Person Linkedin Url"] || row["Linkedin Url"],
+                    company: row["Company"] || row["Company Name"],
+                    website: row["Website"] || row["Company Website"],
                     country: row["Country"],
                   };
                 })
@@ -69,12 +71,14 @@ function App() {
       });
     }
 
-    addEmails(contacts).then(() => {
-      toast({
-        title: "Success",
-        description: "Successfully added",
+    new Array(Math.ceil(contacts.length / 200)).fill(0).map((_, i) => {
+      addEmails(contacts.slice(i * 200, i * 200 + 200)).then(() => {
+        toast({
+          title: "Success",
+          description: "Successfully added",
+        });
+        getMailInfo();
       });
-      getMailInfo();
     });
   }
 
