@@ -35,10 +35,11 @@ function App() {
                 .filter((row: any) => row["Email"])
                 .map((row: any) => {
                   const fullName = row["Full Name"];
+                  
                   return {
                     email: row["Email"],
-                    first_name: row["First Name"] || fullName.split(" ")[0],
-                    last_name: row["Last Name"] || fullName.split(" ")[1],
+                    first_name: row["First Name"] || fullName?.split(" ")?.[0] || "",
+                    last_name: row["Last Name"] || fullName?.split(" ")?.[1] || "",
                     job_title: row["Title"] || row["Job Title"],
                     company_linkedin: row["Company Linkedin Url"],
                     linkedin: row["Person Linkedin Url"] || row["Linkedin Url"],
